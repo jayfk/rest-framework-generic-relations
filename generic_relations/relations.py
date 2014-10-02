@@ -44,11 +44,12 @@ class GenericRelatedField(serializers.WritableField):
         """
         value = super(GenericRelatedField, self).field_to_native(
             obj, field_name)
-        serializer = self.determine_deserializer_for_data(value)
+        if value:
+            serializer = self.determine_deserializer_for_data(value)
 
-        # Necessary because of context, field resolving etc.
-        serializer.initialize(self.parent, field_name)
-        return serializer.to_native(value)
+            # Necessary because of context, field resolving etc.
+            serializer.initialize(self.parent, field_name)
+            return serializer.to_native(value)
 
     def to_native(self, value):
         # Override to prevent the simplifying process of value as present
@@ -94,3 +95,4 @@ class GenericRelatedField(serializers.WritableField):
             raise ImproperlyConfigured(
                 'There were multiple serializers found for value %r.' % value)
         return serializers[0]
+
